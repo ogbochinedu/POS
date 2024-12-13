@@ -91,7 +91,7 @@ const Receipt = ({
 //   });
   
 //   };
-const handlePrint = () => {
+const handlePrint33 = () => {
     const printContent = receiptRef.current.innerHTML;
   
     // Send the content to the main process to handle the print request
@@ -120,15 +120,13 @@ const handlePrint44 = () => {
     }
   }
   
-  const handlePrint77 = () => {
+  const handlePrint = () => {
     console.log('Attempting to print...')
     if (window.electronAPI) {
-      window.electronAPI.print(`
-        <div class="receipt">
-          <h1>Sample Receipt</h1>
-          <p>This is a test print</p>
-        </div>
-      `)
+        const printContent = receiptRef.current.innerHTML;
+  //console.log(printContent)
+        // Send the content to the main process to handle the print request
+        window.electronAPI.print('print-request', printContent);
     } else {
       console.error('Electron API is not available')
       console.log('window object:', window)
