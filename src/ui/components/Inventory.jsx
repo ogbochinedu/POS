@@ -1,12 +1,50 @@
-import React, { useState } from 'react';
-import { PlusCircle, Edit, AlertTriangle, Search } from 'lucide-react';
+import React, { useState,useEffect } from 'react';
+import { PlusCircle, Edit, AlertTriangle, Search,Trash2 ,RefreshCw} from 'lucide-react'; 
+import useInventory from '../../hooks/useInventory';
+import useProducts from '../../hooks/useProducts';
 
 const InventoryManagement = () => {
-  const [products, setProducts] = useState([
-    { id: 1, name: 'Coffee Beans', category: 'Beverages', price: 15.99, stock: 50, threshold: 10 },
-    { id: 2, name: 'Tea Bags', category: 'Beverages', price: 5.99, stock: 8, threshold: 15 },
-    { id: 3, name: 'Cookies', category: 'Snacks', price: 3.99, stock: 25, threshold: 20 },
-  ]);
+const{
+
+    productsValue,
+    addProduct,
+    updateProduct,
+    deleteProduct
+}=useProducts();
+
+    const {
+        inventory,
+        loading,
+        error,
+        saveInventory,
+        deleteInventory,
+        addTransaction,
+        getLowStockItems,
+      } = useInventory();
+
+    
+
+      console.log(productsValue,inventory,"use products")
+  const [products, setProducts] = useState([])
+  const [productCategory,setProductCategory] = useState([]);
+  const [selectedProductCategory, setSelectedProductCategory] = useState('all');
+  const [productSearchTerm, setProductSearchTerm] = useState('');
+  useEffect(() => {
+    setProducts(productsValue);
+    const categories = [...new Set(productsValue.map(product => product.category))];
+    setProductCategory(categories);
+  }, [productsValue]);
+
+
+  const [inventories, setInventories] = useState([]); 
+  useEffect(() => {
+    setInventories(inventory);
+  }, [inventory]);
+//   useState([
+//     { id: 1, name: 'Coffee Beans', category: 'Beverages', price: 15.99, stock: 50, threshold: 10 },
+//     { id: 2, name: 'Tea Bags', category: 'Beverages', price: 5.99, stock: 8, threshold: 15 },
+//     { id: 3, name: 'Cookies', category: 'Snacks', price: 3.99, stock: 25, threshold: 20 },
+//   ]);
 
   const [categories] = useState(['Beverages', 'Snacks', 'Meals', 'Desserts']);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -53,12 +91,46 @@ const InventoryManagement = () => {
   };
 
   const filteredProducts = products.filter(product => {
+  
+    const matchesSearch = product.name.toLowerCase().includes(productSearchTerm.toLowerCase());
+    const matchesCategory = selectedProductCategory === 'all' || product.category === selectedProductCategory;
+    console.log("here",matchesSearch,matchesCategory,product,selectedProductCategory,productSearchTerm)
+    return matchesSearch && matchesCategory;
+  });
+
+
+  const filteredInventories = inventories.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
+  const handleAddItem = async () => {
+    await saveInventory('12345', {
+      productName: 'Rice',
+      quantity: 100,
+      unitPrice: 50,
+      sellingPrice: 60,
+      reorderLevel: 20,
+      category: 'Grains',
+    });
+  };
+
+  const handleAddTransaction = async () => {
+    await addTransaction('12345', {
+      type: 'add', // 'add', 'remove', or 'usage'
+      quantity: 50,
+      user: 'admin',
+      note: 'Added 50 kg of rice',
+    });
+  };
+
+  const handleDeleteItem = async () => {
+    await deleteInventory('12345');
+  };
+
   return (
+    <>
     <div className="inventory-container">
       <div className="inventory-card">
         <div className="card-header">
@@ -72,33 +144,12 @@ const InventoryManagement = () => {
             }}
           >
             <PlusCircle className="icon" />
-            Add Product
+            Add Inventory
           </button>
         </div>
 
         <div className="card-content">
-          {/* <div className="filters">
-            <div className="search-container">
-              <Search className="search-icon" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-              />
-            </div>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="category-select"
-            >
-              <option value="all">All Categories</option>
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
-          </div> */}
+        
           <div className="filters" style={{
   display: 'flex', 
   flexWrap: 'wrap', 
@@ -162,7 +213,7 @@ const InventoryManagement = () => {
   </select>
 </div>
 
-
+<div className="table-body-container">
           <table className="inventory-table">
             <thead>
               <tr>
@@ -173,8 +224,9 @@ const InventoryManagement = () => {
                 <th>Actions</th>
               </tr>
             </thead>
+          
             <tbody>
-              {filteredProducts.map(product => (
+              {filteredInventories.map(product => (
                 <tr key={product.id}>
                   <td className="product-name">
                     {product.name}
@@ -199,8 +251,13 @@ const InventoryManagement = () => {
                 </tr>
               ))}
             </tbody>
+          
           </table>
+          </div>
         </div>
+      </div>
+
+
       </div>
 
       {isModalOpen && (
@@ -294,7 +351,11 @@ const InventoryManagement = () => {
           border-radius: 8px;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-
+.table-body-container {
+  display: block;
+  max-height: 400px; /* Adjust height as needed */
+  overflow-y: auto;
+}
         .card-header {
           padding: 20px;
           display: flex;
@@ -505,7 +566,155 @@ const InventoryManagement = () => {
           height: 16px;
         }
       `}</style>
-    </div>
+   
+   <div className="inventory-container">
+      <div className="inventory-card">
+        <div className="card-header">
+          <h2>Product Management</h2>
+
+          <button 
+            className="add-button"
+           
+          >
+            <RefreshCw className="icon" />
+          
+          </button>
+          <button 
+            className="add-button"
+            onClick={() => {
+              setSelectedProduct(null);
+              setFormData(initialFormState);
+              setIsModalOpen(true);
+            }}
+          >
+            <PlusCircle className="icon" />
+            Add Product
+          </button>
+        
+        </div>
+
+        <div className="card-content">
+          
+          <div className="filters" style={{
+  display: 'flex', 
+  flexWrap: 'wrap', 
+  gap: '10px', 
+  maxWidth: '100%', 
+  overflow: 'hidden', 
+  boxSizing: 'border-box', 
+}}>
+  <div className="search-container" style={{
+    position: 'relative', 
+    flex: '1', 
+    minWidth: '200px', 
+    maxWidth: '100%', 
+    boxSizing: 'border-box',
+  }}>
+    <Search className="search-icon" style={{
+      position: 'absolute', 
+      left: '10px', 
+      top: '50%', 
+      transform: 'translateY(-50%)', 
+      color: '#666',
+      pointerEvents: 'none',
+    }} />
+    <input
+      type="text"
+      placeholder="Search products..."
+      value={productSearchTerm}
+      onChange={(e) => setProductSearchTerm(e.target.value)}
+      className="search-input"
+      style={{
+        width: '100%', 
+        padding: '10px 10px 10px 35px', 
+        border: '2px solid #ddd', 
+        borderRadius: '5px', 
+        fontSize: '14px', 
+        outline: 'none',
+        boxSizing: 'border-box'
+      }}
+    />
+  </div>
+  <select
+    value={selectedProductCategory}
+    onChange={(e) => setSelectedProductCategory(e.target.value)}
+    className="category-select"
+    style={{
+      flex: '1', 
+      minWidth: '150px', 
+      maxWidth: '100%', 
+      padding: '10px', 
+      border: '2px solid #ddd', 
+      borderRadius: '5px', 
+      fontSize: '14px', 
+      outline: 'none',
+      boxSizing: 'border-box',
+    }}
+  >
+    <option value="all">All Categories</option>
+    {productCategory.map(category => (
+      <option key={category} value={category}>{category}</option>
+    ))}
+  </select>
+</div>
+
+<div className="table-body-container">
+          <table className="inventory-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+           
+            <tbody>
+              {filteredProducts.map(product => (
+                <tr key={product.id}>
+                  <td className="product-name">
+                    {product.name}
+                    {/* {product.stock <= product.threshold && (
+                      <span className="low-stock-badge">
+                        <AlertTriangle className="icon" />
+                        Low Stock
+                      </span>
+                    )} */}
+                  </td>
+                  <td>{product.category}</td>
+                  <td>₦{product.price}</td>
+                  <td>{product.inventoryStatus}</td>
+                  <td>
+                    <button
+                      className="edit-button"
+                      onClick={() => handleEdit(product)}
+                    >
+                      <Edit className="icon" />
+                    
+                    </button>
+                    <button
+                      className="edit-button"
+                    //  onClick={() => handleEdit(product)}
+                    >
+                     <Trash2 className='icon ml-3'/>
+                    
+                    </button>
+
+                  
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+           
+          </table>
+          </div>
+        </div>
+      </div>
+
+
+      </div>
+    </>
   );
 };
 

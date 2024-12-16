@@ -1,6 +1,9 @@
-import React from 'react';
+import React,{useEffect} from 'react';
+import { Link } from 'react-router-dom';
+import useTransactions from '../../hooks/useTransactions';
 
 const Dashboard = () => {
+  const { getDailySales,getMonthlySales,getTotalTransactionsToday}=useTransactions();
   // Sample data - in a real app, this would come from your backend
   const metrics = {
     dailySales: 2547.89,
@@ -9,6 +12,7 @@ const Dashboard = () => {
     lowStockItems: 5
   };
 
+ 
   return (
     <div className="dashboard">
       <style>{`
@@ -161,13 +165,13 @@ const Dashboard = () => {
 
       <div className="header">
         <h1>Store Dashboard</h1>
-        <button className="settings-btn">
+        <Link  to="/settings" className="settings-btn">
           <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
             <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
           </svg>
           Settings
-        </button>
+        </Link>
       </div>
 
       <div className="metrics-grid">
@@ -178,7 +182,7 @@ const Dashboard = () => {
               <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
             </svg>
           </div>
-          <p className="metric-value">₦{metrics.dailySales.toLocaleString()}</p>
+          <p className="metric-value">₦{ getDailySales().toLocaleString()}</p>
           <p className="metric-subtitle">Today's total sales</p>
         </div>
 
@@ -189,7 +193,7 @@ const Dashboard = () => {
               <path d="M18 20V10M12 20V4M6 20v-6" />
             </svg>
           </div>
-          <p className="metric-value">₦{metrics.totalRevenue.toLocaleString()}</p>
+          <p className="metric-value">₦{getMonthlySales().toLocaleString()}</p>
           <p className="metric-subtitle">This month</p>
         </div>
 
@@ -202,7 +206,7 @@ const Dashboard = () => {
               <path d="M16 10a4 4 0 01-8 0" />
             </svg>
           </div>
-          <p className="metric-value">{metrics.transactions}</p>
+          <p className="metric-value">{getTotalTransactionsToday()}</p>
           <p className="metric-subtitle">Today's transactions</p>
         </div>
 
@@ -223,35 +227,36 @@ const Dashboard = () => {
       <div className="quick-actions">
         <h2>Quick Actions</h2>
         <div className="actions-grid">
-          <button className="action-btn primary">
+      
+          <Link to="/sales" className="action-btn primary">
             <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12h14" />
             </svg>
             New Sale
-          </button>
-          <button className="action-btn">
+          </Link>
+          <Link  to="/inventory" className="action-btn">
             <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
             </svg>
             Inventory
-          </button>
-          <button className="action-btn">
+          </Link>
+          <Link  to="/transactionhistory" className="action-btn">
             <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
               <path d="M13 3h-2a2 2 0 00-2 2v2h6V5a2 2 0 00-2-2z" />
               <path d="M9 12h6" />
               <path d="M9 16h6" />
             </svg>
-            Reports
-          </button>
-          <button className="action-btn">
+            Transactions
+          </Link>
+          <Link   to="/inventory" className="action-btn">
             <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
               <path d="M3 6h18" />
               <path d="M16 10a4 4 0 01-8 0" />
             </svg>
             Products
-          </button>
+          </Link>
         </div>
       </div>
     </div>

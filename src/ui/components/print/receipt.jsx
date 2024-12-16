@@ -173,10 +173,10 @@ const handlePrint44 = () => {
           <span>Subtotal:</span>
           <span>₦{subtotal.toFixed(2)}</span>
         </div>
-        <div className="item">
+        {/* <div className="item">
           <span>Tax:</span>
           <span>₦{tax.toFixed(2)}</span>
-        </div>
+        </div> */}
         <div className="divider"></div>
         <div className="item bold">
           <span>Total:</span>

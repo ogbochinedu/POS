@@ -1,9 +1,12 @@
-import useProducts from '../../hooks/useProducts';
 import React, { useState, useEffect } from 'react';
 import ReceiptExample from '../components/Receipt';
+import Receipt from './print/receipt';
+import useProducts from '../../hooks/useProducts';
+import useTransactions from '../../hooks/useTransactions';
 
 const POSCheckoutPage = () => {
   const{ productsValue,loading,error,addProduct,updateProduct, deleteProduct}=useProducts();
+  const {addTransaction} =useTransactions();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [cart, setCart] = useState([]);
@@ -13,6 +16,14 @@ const POSCheckoutPage = () => {
   const [paymentMethod, setPaymentMethod] = useState('');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
+
+  const [receiptData,setReceiptData] =useState();
+  const [receiptLoaded,setReceiptLoaded] = useState(false);
+
+  const [amountPaid, setAmountPaid] = useState('');
+  const [change, setChange] = useState(null);
+  const [showChange, setShowChange] = useState(false);
+
 console.log(cart,"cart..")
   useEffect(() => {
     fetchAndMapProducts();
@@ -250,7 +261,7 @@ if (!productsFromDb || productsFromDb.length === 0) {
         }}>
           
 
-          <ReceiptExample/>
+       {receiptLoaded?   <Receipt {...receiptData} /> :<></>}
         </div>
         <div style={{
           marginTop: '20px',
@@ -270,8 +281,8 @@ if (!productsFromDb || productsFromDb.length === 0) {
           >
             Cancel
           </button>
-          {/* <button
-            onClick={handleCheckout}
+          <button
+            onClick={saveTransaction}
             disabled={!paymentMethod}
             style={{
               padding: '10px 20px',
@@ -282,23 +293,240 @@ if (!productsFromDb || productsFromDb.length === 0) {
               cursor: paymentMethod ? 'pointer' : 'not-allowed'
             }}
           >
-            Proceed
-          </button> */}
+            Finish
+          </button>
         </div>
       </div>
     </div>
   );
 
+  const handleAmountChange = (e) => {
+    const value = e.target.value;
+    setAmountPaid(value);
+
+    const numericValue = parseFloat(value);
+    if (!isNaN(numericValue) && numericValue >= total) {
+        const changeValue = numericValue - total;
+      setChange(changeValue);
+    } else {
+      setChange(null);
+    }
+
+  };
+  
+
+
+  const ChangeModal= ({onClose})=>(
+    <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '30px',
+            borderRadius: '8px',
+            width: '400px',
+            maxWidth: '90%'
+          }}>
+            <h2 style={{ marginBottom: '20px' }}>Preview Receipt</h2>
+            <div style={{
+              display: 'grid',
+              gap: '15px'
+            }}>
+              
+              <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000,
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: 'white',
+          padding: '30px',
+          borderRadius: '8px',
+          width: '400px',
+          maxWidth: '90%',
+        }}
+      >
+        <h2 style={{ marginBottom: '20px' }}>Cash</h2>
+        <div
+          style={{
+            display: 'grid',
+            gap: '15px',
+          }}
+        >
+          <p>Total Amount: <strong>₦{total.toFixed(2)}</strong></p>
+          <label>
+            Amount Paid:
+            <input
+              type="number"
+              value={amountPaid}
+              onChange={handleAmountChange}
+              placeholder="Enter amount paid"
+              style={{
+                width: '100%',
+                padding: '8px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                marginTop: '8px',
+              }}
+            />
+          </label>
+          {change !== null && (
+            <p>
+              Change: <strong>₦{change.toFixed(2)}</strong>
+            </p>
+          )}
+        </div>
+        <div
+          style={{
+            marginTop: '20px',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: '10px',
+          }}
+        >
+          <button
+            onClick={onClose}
+            style={{
+              padding: '10px 20px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              backgroundColor: 'white',
+              cursor: 'pointer',
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleCheckout}
+            disabled={!amountPaid || change === null}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: amountPaid && change !== null ? '#28a745' : '#ccc',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: amountPaid && change !== null ? 'pointer' : 'not-allowed',
+            }}
+          >
+            Finish
+          </button>
+        </div>
+      </div>
+    </div>
+          
+            </div>
+            <div style={{
+              marginTop: '20px',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: '10px'
+            }}>
+              <button
+                onClick={onClose}
+                style={{
+                  padding: '10px 20px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  backgroundColor: 'white',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCheckout}
+                disabled={!paymentMethod}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: paymentMethod ? '#28a745' : '#ccc',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: paymentMethod ? 'pointer' : 'not-allowed'
+                }}
+              >
+                Finish
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+
   const handlePayment = (method) => {
     setPaymentMethod(method);
+    let total  = 0;
+    const output = cart?.map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        notes: item.inventoryStatus === "INSTOCK" ? "Available" : "Out of Stock"
+
+      }    ));
+      // Calculate total price
+total = cart.reduce(
+    (acc, item) => acc + Number(item.quantity) * Number(item.price), // Convert to numbers here as well
+    0
+  ); 
+
+      
+    const sampleData = {
+        businessName: "Mimi 042",
+        address: "Coal City Garden Estate Shopping Mall, Okpara Ave, behind CBN Office, Enugu",
+        phoneNumber: "(+234) 807-733-8874",
+        orderNumber: "1001",
+        cashierName: "John Doe",
+        items: output,
+        subtotal: total,
+        tax: 1.48,
+        total: total,
+        paymentMethod: method,
+        dateTime: new Date().toLocaleString(),
+        customerName: "Jane Smith",
+        customMessage: "Thank you for dining with us! We hope you enjoyed your meal and look forward to serving you again."
+      };
+      if(method==='cash')
+        {setShowChange(true)}
+      else{
     setShowReceiptModal(true);
+      }
+    setReceiptData(sampleData);
+    setReceiptLoaded(true);
   };
 
   const handleCheckout = () => {
     console.log('Processing checkout:', { cart, total, discount, paymentMethod });
     setShowPaymentModal(false);
+    setShowReceiptModal(true);
+    setShowChange(false);
     // Implement payment processing logic here
   };
+
+
+  const saveTransaction =()=>{
+    addTransaction(receiptData);
+    setCart([]);
+    setShowReceiptModal(false);
+    setShowPaymentModal(false);
+  }
 
   // ... (previous functions remain the same)
 
@@ -677,6 +905,7 @@ if (!productsFromDb || productsFromDb.length === 0) {
 
       {showPaymentModal && <PaymentModal onClose={() => setShowPaymentModal(false)} />}
       {showReceiptModal && <ReceiptModal onClose={() => setShowReceiptModal(false)} />}
+      {showChange && <ChangeModal onClose={() => setShowChange(false)} />}
       
     </div>
   );

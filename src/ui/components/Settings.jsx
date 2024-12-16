@@ -223,7 +223,7 @@ const SettingsPage = () => {
         >
           User Management
         </button>
-        <button 
+        {/* <button 
           className={`tab ${activeTab === 'business' ? 'active' : ''}`}
           onClick={() => setActiveTab('business')}
         >
@@ -240,7 +240,7 @@ const SettingsPage = () => {
           onClick={() => setActiveTab('hardware')}
         >
           Hardware
-        </button>
+        </button> */}
       </div>
 
       <div className={`tab-content ${activeTab === 'user' ? 'active' : ''}`}>

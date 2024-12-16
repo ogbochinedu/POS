@@ -55,6 +55,49 @@ const useTransactions = () => {
     }
   };
 
+  // Get daily sales
+  const getDailySales = () => {
+    const today = new Date();
+    const todayTransactions = transactions.filter((transaction) => {
+      const transactionDate = new Date(transaction.date);
+      return (
+        transactionDate.getFullYear() === today.getFullYear() &&
+        transactionDate.getMonth() === today.getMonth() &&
+        transactionDate.getDate() === today.getDate()
+      );
+    });
+    return todayTransactions.reduce((acc, current) => acc + current.subtotal, 0);
+  };
+
+   // Get monthly sales
+   const getMonthlySales = () => {
+    const today = new Date();
+    const thisMonthTransactions = transactions.filter((transaction) => {
+      const transactionDate = new Date(transaction.date);
+      return (
+        transactionDate.getFullYear() === today.getFullYear() &&
+        transactionDate.getMonth() === today.getMonth()
+      );
+    });
+    return thisMonthTransactions.reduce((acc, current) => acc + current.subtotal, 0);
+  };
+
+  // Get total transactions for the current day
+  const getTotalTransactionsToday = () => {
+    const today = new Date();
+    const todayTransactions = transactions.filter((transaction) => {
+      const transactionDate = new Date(transaction.date);
+      return (
+        transactionDate.getFullYear() === today.getFullYear() &&
+        transactionDate.getMonth() === today.getMonth() &&
+        transactionDate.getDate() === today.getDate()
+      );
+    });
+    return todayTransactions.length;
+  };
+
+
+
   // Fetch transactions when the component mounts
   useEffect(() => {
     getAllTransactions();
@@ -66,6 +109,9 @@ const useTransactions = () => {
     error,
     addTransaction,
     deleteTransaction,
+    getDailySales,
+    getMonthlySales,
+    getTotalTransactionsToday,
   };
 };
 

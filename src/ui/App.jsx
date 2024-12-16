@@ -529,7 +529,7 @@ function AppContent() {
     { path: '/inventory', name: 'Inventory', icon: 'inventory' },
     { path: '/transactionhistory', name: 'Transactions', icon: 'transactions' },
     { path: '/settings', name: 'Settings', icon: 'settings' },
-    { path: '/receipt', name: 'receipt', icon: 'settings' }
+    // { path: '/receipt', name: 'receipt', icon: 'settings' }
   ];
 
   return (
@@ -619,7 +619,7 @@ function AppContent() {
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/transactionhistory" element={<TransactionHistory />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/receipt" element={<ReceiptExample />} />
+          {/* <Route path="/receipt" element={<ReceiptExample />} /> */}
         </Routes>
       </div>
     </div>

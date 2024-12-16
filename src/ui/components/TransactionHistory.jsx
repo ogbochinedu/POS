@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import useTransactions from '../../hooks/useTransactions';
+import Receipt from './print/receipt';
 
 const TransactionHistory = () => {
+    const {transactions,loading} = useTransactions(); 
+    console.log(transactions,"use transactions")
     // Sample transaction data - in a real app, this would come from your backend
-    const [transactions] = useState([
+    const [transactions1] = useState([
         {
             id: '1',
             date: '2024-12-08',
@@ -25,6 +29,7 @@ const TransactionHistory = () => {
             ]
         }
     ]);
+   // const [transactions,setTransactions] = useState([]);
 
     // Filter states
     const [dateFilter, setDateFilter] = useState('');
@@ -44,59 +49,130 @@ const TransactionHistory = () => {
         return matchesDate && matchesCashier && matchesSearch;
     });
 
+
+    const [showReceiptModal, setShowReceiptModal] = useState(false);
+
+    const [receiptData,setReceiptData] =useState();
+    const [receiptLoaded,setReceiptLoaded] = useState(false);
+
+
+
+    const formatDate = (isoDate) => {
+        const date = new Date(isoDate);
+        return date.toLocaleDateString();
+      };
+  
+ 
     // Receipt generation
     const generateReceipt = (transaction) => {
         // Create receipt window
-        const receiptWindow = window.open('', '_blank');
-        receiptWindow.document.write(`
-            <html>
-                <head>
-                    <title>Receipt #${transaction.id}</title>
-                    <style>
-                        body {
-                            font-family: monospace;
-                            padding: 20px;
-                            max-width: 300px;
-                            margin: 0 auto;
-                        }
-                        .header {
-                            text-align: center;
-                            margin-bottom: 20px;
-                        }
-                        .items {
-                            border-top: 1px dashed #000;
-                            border-bottom: 1px dashed #000;
-                            padding: 10px 0;
-                            margin: 10px 0;
-                        }
-                        .total {
-                            text-align: right;
-                            font-weight: bold;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h2>Store Receipt</h2>
-                        <p>Date: ${transaction.date}</p>
-                        <p>Transaction #${transaction.id}</p>
-                    </div>
-                    <div class="items">
-                        ${transaction.items.map(item => `
-                            <p>${item.name} x${item.quantity} - $${item.price.toFixed(2)}</p>
-                        `).join('')}
-                    </div>
-                    <div class="total">
-                        <p>Total: ₦${transaction.amount.toFixed(2)}</p>
-                        <p>Payment Method: ${transaction.paymentMethod}</p>
-                    </div>
-                    <p>Cashier: ${transaction.cashier}</p>
-                </body>
-            </html>
-        `);
-        receiptWindow.document.close();
+        // const receiptWindow = window.open('', '_blank');
+        // receiptWindow.document.write(`
+        //     <html>
+        //         <head>
+        //             <title>Receipt #${transaction._id}</title>
+        //             <style>
+        //                 body {
+        //                     font-family: monospace;
+        //                     padding: 20px;
+        //                     max-width: 300px;
+        //                     margin: 0 auto;
+        //                 }
+        //                 .header {
+        //                     text-align: center;
+        //                     margin-bottom: 20px;
+        //                 }
+        //                 .items {
+        //                     border-top: 1px dashed #000;
+        //                     border-bottom: 1px dashed #000;
+        //                     padding: 10px 0;
+        //                     margin: 10px 0;
+        //                 }
+        //                 .total {
+        //                     text-align: right;
+        //                     font-weight: bold;
+        //                 }
+        //             </style>
+        //         </head>
+        //         <body>
+        //             <div class="header">
+        //                 <h2>Store Receipt</h2>
+        //                 <p>Date: ${transaction.date}</p>
+        //                 <p>Transaction #${transaction._id}</p>
+        //             </div>
+        //             <div class="items">
+        //                 ${transaction.items.map(item => `
+        //                     <p>${item.name} x${item.quantity} - $${item.price}</p>
+        //                 `).join('')}
+        //             </div>
+        //             <div class="total">
+        //                 <p>Total: ₦${transaction.subtotal.toFixed(2)}</p>
+        //                 <p>Payment Method: ${transaction.paymentMethod}</p>
+        //             </div>
+        //             <p>Cashier: ${transaction.cashierName}</p>
+        //         </body>
+        //     </html>
+        // `);
+        // receiptWindow.document.close();
+console.log(transaction,"transac")
+        setReceiptData(transaction);
+        setReceiptLoaded(true);
+        setShowReceiptModal(true);
     };
 
+
+    const ReceiptModal= ({onClose})=>(
+        <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1000
+            }}>
+              <div style={{
+                backgroundColor: 'white',
+                padding: '30px',
+                borderRadius: '8px',
+                width: '400px',
+                maxWidth: '90%'
+              }}>
+                <h2 style={{ marginBottom: '20px' }}>Preview Receipt</h2>
+                <div style={{
+                  display: 'grid',
+                  gap: '15px'
+                }}>
+                  
+        
+               {receiptLoaded?   <Receipt {...receiptData} /> :<></>}
+                </div>
+                <div style={{
+                  marginTop: '20px',
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: '10px'
+                }}>
+                  <button
+                    onClick={onClose}
+                    style={{
+                      padding: '10px 20px',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px',
+                      backgroundColor: 'white',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                
+                </div>
+              </div>
+            </div>
+          );
     return (
         <div className="transaction-history">
             <style>
@@ -165,6 +241,12 @@ const TransactionHistory = () => {
                         padding: 20px;
                         color: #666;
                     }
+
+                    .table-body-container {
+  display: block;
+  max-height: 400px; /* Adjust height as needed */
+  overflow-y: auto;
+}
                 `}
             </style>
 
@@ -192,7 +274,7 @@ const TransactionHistory = () => {
                     className="filter-input"
                 />
             </div>
-
+            <div className="table-body-container">
             <table className="transactions-table">
                 <thead>
                     <tr>
@@ -207,12 +289,12 @@ const TransactionHistory = () => {
                 <tbody>
                     {filteredTransactions.length > 0 ? (
                         filteredTransactions.map(transaction => (
-                            <tr key={transaction.id}>
-                                <td>{transaction.date}</td>
-                                <td>{transaction.id}</td>
-                                <td>₦{transaction.amount.toFixed(2)}</td>
+                            <tr key={transaction._id}>
+                                <td>{formatDate(transaction.date)}</td>
+                                <td>{transaction._id}</td>
+                                <td>₦{transaction.subtotal.toFixed(2)}</td>
                                 <td>{transaction.paymentMethod}</td>
-                                <td>{transaction.cashier}</td>
+                                <td>{transaction.cashierName}</td>
                                 <td>
                                     <button
                                         className="view-receipt-btn"
@@ -232,6 +314,9 @@ const TransactionHistory = () => {
                     )}
                 </tbody>
             </table>
+            </div>
+
+            {showReceiptModal && <ReceiptModal onClose={() => setShowReceiptModal(false)} />}
         </div>
     );
 };
