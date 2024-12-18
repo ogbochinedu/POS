@@ -781,7 +781,7 @@ total = cart.reduce(
                       borderRadius: '4px',
                       backgroundColor: 'white'
                     }}
-                  >-</button>
+                  ><span style={{color:"black"}}>-</span></button>
                   <span>{item.quantity}</span>
                   <button
                     onClick={() => updateQuantity(item.id, item.quantity + 1)}
@@ -791,7 +791,7 @@ total = cart.reduce(
                       borderRadius: '4px',
                       backgroundColor: 'white'
                     }}
-                  >+</button>
+                  ><span style={{color:"black"}}>+</span> </button>
                   <button
                     onClick={() => removeFromCart(item.id)}
                     style={{

@@ -199,7 +199,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import reactLogo from '../assets/react.svg';
-import Logo from '../assets/appvoltz logo.png';
+import Logo from '../assets/mimi.jpg';
 import BackgroundImage from '../assets/bgpos.jpg'; // Import your background image here
 
 const styles = `
@@ -338,7 +338,7 @@ const Login = () => {
             <img
               src={Logo}
               alt="POS Logo"
-              className="logo-image"
+              className="logo-image w-32 h-32"
             />
             <div className="welcome-text">Welcome Back</div>
           </div>

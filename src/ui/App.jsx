@@ -360,7 +360,7 @@ import Inventory from './components/Inventory';
 import TransactionHistory from './components/TransactionHistory';
 import Settings from './components/Settings';
 import ReceiptExample from './components/Receipt';
-import Logo from './assets/appvoltz logo.png';
+import Logo from './assets/mimi.jpg';
 
 const styles = `
   .app-container {
@@ -542,7 +542,7 @@ function AppContent() {
             <div className="nav-content">
               <div className="logo-section">
                 <img src={Logo} alt="logo" className="logo" />
-                <span className="brand-name">ACS</span>
+                <span className="brand-name">Mimi's Place 042</span>
               </div>
 
               <div className="desktop-nav">
