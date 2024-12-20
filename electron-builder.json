@@ -1,7 +1,7 @@
 {
     "appId":"com.appsvoltz.pos",
     "files":["dist-electron","dist-react"],
-    "icon": "./desktopIcon.png",
+    "icon": "./mimi.jpg",
     "mac":{
         "target":"dmg"
     },
