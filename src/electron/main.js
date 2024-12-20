@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 
-const preloadPath = path.join(__dirname, 'preload.js')
+const preloadPath = path.join(__dirname, 'preload.cjs')
 console.log('Preload path:', preloadPath)
 
 
@@ -32,7 +32,9 @@ function createWindow() {
   // if (isDev) {
   //   mainWindow.loadURL('http://localhost:5173/')
   // } else {
-    mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'))
+   // mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'))
+    mainWindow.loadFile(path.join(__dirname, 'dist-react', 'index.html'));
+
   //}
 
   // For debugging

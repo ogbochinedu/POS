@@ -7,9 +7,9 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 
-const preloadPath = path.join(__dirname, 'preload.js')
+const preloadPath = path.join(__dirname, 'preload.cjs')
 console.log('Preload path:', preloadPath)
-
+console.log(path.join(app.getAppPath(), '/dist-react/index.html'),"hosted ")
 
 // Proper development check
 const isDev = true
@@ -22,7 +22,7 @@ function createWindow() {
     height: 500,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
       preload: preloadPath,
         // Add this for debugging
         //devTools: true
