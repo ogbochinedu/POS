@@ -29,11 +29,11 @@ function createWindow() {
     }
   })
 
-  if (isDev) {
-    mainWindow.loadURL('http://localhost:5173/')
-  } else {
+  // if (isDev) {
+  //   mainWindow.loadURL('http://localhost:5173/')
+  // } else {
     mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'))
-  }
+ // }
 
   // For debugging
  // mainWindow.webContents.openDevTools()

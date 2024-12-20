@@ -10,6 +10,7 @@
         "category":"Utility"
     },
     "win":{
-        "target":["portable","msi"]
+        "target": ["nsis", "msi", "portable"],
+        "icon":"./mimi.jpg"
     }
 }
