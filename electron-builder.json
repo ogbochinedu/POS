@@ -1,6 +1,6 @@
 {
     "appId":"com.appsvoltz.pos",
-    "files":["dist-electron","dist-react"],
+    "files":["dist-electron/**/*","dist-react/**/*", "node_modules/**/*"],
     "icon": "./mimi.jpg",
     "mac":{
         "target":"dmg"
