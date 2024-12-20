@@ -21,7 +21,7 @@ function createWindow() {
     width: 800,
     height: 500,
     webPreferences: {
-      nodeIntegration: false,
+      nodeIntegration: true,
       contextIsolation: true,
       preload: preloadPath,
         // Add this for debugging
