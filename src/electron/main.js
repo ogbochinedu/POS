@@ -3,6 +3,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
@@ -34,6 +35,14 @@ function createWindow() {
   // } else {
    // mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'))
     mainWindow.loadFile(path.join(__dirname, 'dist-react', 'index.html'));
+
+    mainWindow.loadURL(
+      url.format({
+        pathname: path.join(__dirname, 'dist-react/index.html'),
+        protocol: 'file:',
+        slashes: true,
+      })
+    );
 
   //}
 
