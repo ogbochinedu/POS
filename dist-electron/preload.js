@@ -11,7 +11,7 @@
 // console.log('Preload script finished executing!')
 
 
-const { contextBridge, ipcRenderer } = require('electron');
+import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   print: (channel, data) => {
