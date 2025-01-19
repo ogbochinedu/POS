@@ -567,14 +567,14 @@ total = cart.reduce(
         customMessage: "Thank you for dining with us! We hope you enjoyed your meal and look forward to serving you again.",
         change: method ==='cash'? amountPaid - total : 0
       };
-      if(method==='cash')
-        {setShowChange(true)
-        setShowReceiptModal(false);
-        setShowPaymentModal(false);
-        }
-      else{
+      // if(method==='cash')
+      //   {setShowChange(true)
+      //   setShowReceiptModal(false);
+      //   setShowPaymentModal(false);
+      //   }
+      // else{
     setShowReceiptModal(true);
-      }
+     // }
     setReceiptData(sampleData);
     setReceiptLoaded(true);
   };

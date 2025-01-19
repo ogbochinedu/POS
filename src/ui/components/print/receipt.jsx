@@ -1,5 +1,199 @@
-import React, { useRef,useEffect } from 'react';
-//import { ipcRenderer }  from 'electron';
+// import React, { useRef,useEffect } from 'react';
+// //import { ipcRenderer }  from 'electron';
+
+// const Receipt = ({ 
+//   businessName,
+//   address,
+//   phoneNumber,
+//   orderNumber,
+//   cashierName,
+//   items,
+//   subtotal,
+//   tax,
+//   total,
+//   paymentMethod,
+//   dateTime,
+//   customerName = '',
+//   customMessage = 'Thank you for your patronage!',
+//   change
+// }) => {
+//   const receiptRef = useRef(null);
+
+
+//   useEffect(() => {
+//     console.log('Window APIs:', Object.keys(window))
+//     console.log('Electron API:', window.electronAPI)
+//   }, [])
+
+
+  
+//   // Listening for responses from the main process
+// //   window.electronAPI.onFromMain('reply-from-main', (response) => {
+// //     console.log('Received reply:', response);
+// //   });
+// if (window.electronAPI && window.electronAPI.onFromMain) {
+//     window.electronAPI.onFromMain('reply-from-main', (data) => {
+//       console.log('Data received:', data);
+//     });
+//   } else {
+//     console.error('electronAPI or onFromMain is not defined');
+//   }
+
+
+  
+//   const handlePrint = () => {
+//     console.log('Attempting to print...')
+//     if (window.electronAPI) {
+//         const printContent = receiptRef.current.innerHTML;
+//         const printData = `
+//       <html>
+//         <head>
+//           <title>Receipt</title>
+//           <style>
+//             body {
+//               font-family: monospace;
+//               margin: 0;
+//               padding: 0;
+//               background-color: #fff;
+//             }
+//             .receipt {
+//               width: 280px; /* Standard thermal printer width */
+//               margin: auto;
+//               padding: 10px;
+//               font-size: 12px;
+//               line-height: 1.4;
+//               color: #000;
+//             }
+//             .center {
+//               text-align: center;
+//             }
+//             .divider {
+//               border-top: 1px dashed #000;
+//               margin: 8px 0;
+//             }
+//             .right {
+//               text-align: right;
+//             }
+//             .bold {
+//               font-weight: bold;
+//             }
+//             .item {
+//               display: flex;
+//               justify-content: space-between;
+//             }
+//           </style>
+//         </head>
+//         <body>
+//           ${printContent}
+//         </body>
+//       </html>
+//     `
+//   //console.log(printContent)
+//         // Send the content to the main process to handle the print request
+//         window.electronAPI.print('print-request', printData);
+//     } else {
+//       console.error('Electron API is not available')
+//       console.log('window object:', window)
+//     }
+//   }
+
+//   const renderLineItem = (item) => {
+//     const itemTotal = (item.price * item.quantity).toFixed(2);
+//     return (
+//       <div className="item">
+//         <span>{item.quantity}x {item.name}</span>
+//         <span>₦{itemTotal}</span>
+//       </div>
+//     );
+//   };
+
+//   return (
+//     <div>
+       
+//       <div ref={receiptRef} className="receipt">
+//         {/* Business Info */}
+//         <div className="center bold">{businessName}</div>
+//         <div className="center">{address}</div>
+//         <div className="center">{phoneNumber}</div>
+//         <div className="divider"></div>
+
+//         {/* Order Info */}
+//         <div>Order No: #{orderNumber}</div>
+//         {/* {customerName && <div>Customer: {customerName}</div>} */}
+//         <div>Cashier: {cashierName}</div>
+//         <div>Date: {dateTime}</div>
+//         <div className="divider"></div>
+
+//         {/* Items */}
+//         <div>
+//           {items.map((item, index) => (
+//             <div key={index}>{renderLineItem(item)}</div>
+//           ))}
+//         </div>
+//         <div className="divider"></div>
+
+//         {/* Pricing Summary */}
+//         <div className="item">
+//           <span>Subtotal:</span>
+//           <span>₦{subtotal.toFixed(2)}</span>
+//         </div>
+//         {/* <div className="item">
+//           <span>Tax:</span>
+//           <span>₦{tax.toFixed(2)}</span>
+//         </div> */}
+//         <div className="divider"></div>
+//         <div className="item bold">
+//           <span>Total:</span>
+//           <span>₦{total.toFixed(2)}</span>
+//         </div>
+//         <div className="divider"></div>
+
+//         {/* Payment Info */}
+//         <div>Payment Method: {paymentMethod}</div>
+//         {change?<div>Change: ₦{change}</div>:null}
+//         <div className="divider"></div>
+//         {/* Footer */}
+//         <div className="center">{customMessage}</div>
+//       </div>
+
+//       {/* Print Button */}
+//       {/* <button 
+//         onClick={handlePrint} 
+//         style={{
+//             padding: '10px 20px',
+//             backgroundColor:   '#28a745' ,
+//             color: 'white',
+//             border: 'none',
+//             borderRadius: '4px',
+//             cursor: 'pointer',
+//             alignItems:'center' 
+//           }}
+//       >
+//         Print Receipt
+//       </button> */}
+//       <button 
+//   onClick={handlePrint} 
+//   style={{
+//     padding: '10px 20px',
+//     backgroundColor: '#28a745',
+//     color: 'white',
+//     border: 'none',
+//     borderRadius: '4px',
+//     cursor: 'pointer',
+//     display: 'block', // Add this
+//     marginLeft: 'auto', // Add this
+//     marginRight: 'auto' // Add this
+//   }}
+// >
+//   Print Receipt
+// </button>
+//     </div>
+//   );
+// };
+
+// export default Receipt;
+
+import React, { useRef, useEffect } from 'react';
 
 const Receipt = ({ 
   businessName,
@@ -19,254 +213,234 @@ const Receipt = ({
 }) => {
   const receiptRef = useRef(null);
 
-
   useEffect(() => {
-    console.log('Window APIs:', Object.keys(window))
-    console.log('Electron API:', window.electronAPI)
-  }, [])
-
-  // Print the receipt
-  const handlePrint1 = () => {
-    const printContent = receiptRef.current;
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Receipt</title>
-          <style>
-            body {
-              font-family: monospace;
-              margin: 0;
-              padding: 0;
-              background-color: #fff;
-            }
-            .receipt {
-              width: 280px; /* Standard thermal printer width */
-              margin: auto;
-              padding: 10px;
-              font-size: 12px;
-              line-height: 1.4;
-              color: #000;
-            }
-            .center {
-              text-align: center;
-            }
-            .divider {
-              border-top: 1px dashed #000;
-              margin: 8px 0;
-            }
-            .right {
-              text-align: right;
-            }
-            .bold {
-              font-weight: bold;
-            }
-            .item {
-              display: flex;
-              justify-content: space-between;
-            }
-          </style>
-        </head>
-        <body>
-          ${printContent.innerHTML}
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.print();
-  };
-//   const handlePrint = () => {
-//     const printContent = receiptRef.current.innerHTML;
-  
-//     // Send the content to the main process to handle the print request
-//    // ipcRenderer.send('print-receipt', printContent);
-//     // Sending data to the main process
-// document.getElementById('printButton').addEventListener('click', () => {
-//     const receiptContent = '<div>Receipt Content</div>';
-//     window.electronAPI.sendToMain('print-receipt', receiptContent);
-//   });
-  
-//   // Receiving data from the main process
-//   window.electronAPI.onFromMain('reply-from-main', (response) => {
-//     console.log('Received reply:', response);
-//   });
-  
-//   };
-const handlePrint33 = () => {
-    const printContent = receiptRef.current.innerHTML;
-  
-    // Send the content to the main process to handle the print request
-    window.electronAPI.sendToMain('print-request', printContent);
-  };
-  
-  // Listening for responses from the main process
-//   window.electronAPI.onFromMain('reply-from-main', (response) => {
-//     console.log('Received reply:', response);
-//   });
-if (window.electronAPI && window.electronAPI.onFromMain) {
-    window.electronAPI.onFromMain('reply-from-main', (data) => {
-      console.log('Data received:', data);
-    });
-  } else {
-    console.error('electronAPI or onFromMain is not defined');
-  }
-
-
-const handlePrint44 = () => {
-    console.log(window,"window..")
-    if (window.electronAPI) {
-      window.electronAPI.sendToMain('print-request', /* your data here */)
-    } else {
-      console.error('Electron API is not available')
+    // Set up event listener when component mounts
+    if (window.electronAPI?.onFromMain) {
+      window.electronAPI.onFromMain('reply-from-main', handlePrintResponse);
     }
-  }
-  
+
+    // Cleanup listener when component unmounts
+    return () => {
+      if (window.electronAPI?.onFromMain) {
+        window.electronAPI.onFromMain('reply-from-main', null);
+      }
+    };
+  }, []);
+
+  const handlePrintResponse = (data) => {
+    console.log('Print response:', data);
+  };
+
   const handlePrint = () => {
-    console.log('Attempting to print...')
-    if (window.electronAPI) {
-        const printContent = receiptRef.current.innerHTML;
-        const printData = `
-      <html>
-        <head>
-          <title>Receipt</title>
-          <style>
-            body {
-              font-family: monospace;
-              margin: 0;
-              padding: 0;
-              background-color: #fff;
-            }
-            .receipt {
-              width: 280px; /* Standard thermal printer width */
-              margin: auto;
-              padding: 10px;
-              font-size: 12px;
-              line-height: 1.4;
-              color: #000;
-            }
-            .center {
-              text-align: center;
-            }
-            .divider {
-              border-top: 1px dashed #000;
-              margin: 8px 0;
-            }
-            .right {
-              text-align: right;
-            }
-            .bold {
-              font-weight: bold;
-            }
-            .item {
-              display: flex;
-              justify-content: space-between;
-            }
-          </style>
-        </head>
-        <body>
-          ${printContent}
-        </body>
-      </html>
-    `
-  //console.log(printContent)
-        // Send the content to the main process to handle the print request
+    console.log('Initiating print...');
+    if (window.electronAPI?.print) {
+      const printContent = receiptRef.current.innerHTML;
+      const printData = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <title>Receipt</title>
+            <style>
+              @page {
+                margin: 0;
+                size: 80mm auto; /* Standard thermal paper width */
+              }
+              
+              body {
+                font-family: 'Courier New', monospace;
+                margin: 0;
+                padding: 0;
+                background-color: white;
+                color: black;
+                width: 80mm;
+              }
+              
+              .receipt {
+                width: 72mm; /* Account for margins */
+                padding: 3mm;
+                font-size: 12pt;
+                line-height: 1.2;
+              }
+              
+              /* Header Styles */
+              .business-header {
+                text-align: center;
+                margin-bottom: 3mm;
+              }
+              
+              .business-name {
+                font-size: 14pt;
+                font-weight: bold;
+                margin-bottom: 1mm;
+              }
+              
+              /* Divider Line */
+              .divider {
+                border-top: 1px dashed black;
+                margin: 2mm 0;
+                clear: both;
+              }
+              
+              /* Item Layout */
+              .item {
+                display: flex;
+                justify-content: space-between;
+                margin: 1mm 0;
+              }
+              
+              .item-left {
+                flex: 1;
+                text-align: left;
+                padding-right: 2mm;
+              }
+              
+              .item-right {
+                width: 20mm;
+                text-align: right;
+              }
+              
+              /* Totals Section */
+              .bold {
+                font-weight: bold;
+              }
+              
+              .total-section {
+                margin: 2mm 0;
+              }
+              
+              /* Footer */
+              .footer {
+                text-align: center;
+                margin-top: 3mm;
+                font-size: 10pt;
+              }
+              
+              /* Cut Line */
+              .cut-line {
+                border-bottom: 1px dashed black;
+                margin: 5mm 0;
+                position: relative;
+              }
+              
+              .cut-line::before {
+                content: "✂ ---------------";
+                position: absolute;
+                left: 0;
+                right: 0;
+                text-align: center;
+                color: black;
+                font-size: 8pt;
+              }
+
+              /* Ensure proper text wrapping */
+              * {
+                white-space: pre-line;
+                word-wrap: break-word;
+              }
+            </style>
+          </head>
+          <body>
+            ${printContent}
+          </body>
+        </html>
+      `;
+
+      try {
         window.electronAPI.print('print-request', printData);
+      } catch (error) {
+        console.error('Print error:', error);
+      }
     } else {
-      console.error('Electron API is not available')
-      console.log('window object:', window)
+      console.error('Electron API is not available');
     }
-  }
+  };
 
   const renderLineItem = (item) => {
     const itemTotal = (item.price * item.quantity).toFixed(2);
     return (
       <div className="item">
-        <span>{item.quantity}x {item.name}</span>
-        <span>₦{itemTotal}</span>
+        <div className="item-left">
+          <span className="bold">{item.quantity}x </span>
+          {item.name}
+        </div>
+        <div className="item-right">₦{itemTotal}</div>
       </div>
     );
   };
 
   return (
     <div>
-       
       <div ref={receiptRef} className="receipt">
-        {/* Business Info */}
-        <div className="center bold">{businessName}</div>
-        <div className="center">{address}</div>
-        <div className="center">{phoneNumber}</div>
-        <div className="divider"></div>
-
-        {/* Order Info */}
-        <div>Order No: #{orderNumber}</div>
-        {/* {customerName && <div>Customer: {customerName}</div>} */}
-        <div>Cashier: {cashierName}</div>
-        <div>Date: {dateTime}</div>
-        <div className="divider"></div>
-
-        {/* Items */}
+        <div className="business-header">
+          <div className="business-name">{businessName}</div>
+          <div>{address}</div>
+          <div>{phoneNumber}</div>
+        </div>
+        
+        <div className="divider" />
+        
         <div>
+          <div>Order No: #{orderNumber}</div>
+          <div>Cashier: {cashierName}</div>
+          <div>Date: {dateTime}</div>
+          {customerName && <div>Customer: {customerName}</div>}
+        </div>
+        
+        <div className="divider" />
+        
+        <div className="items-section">
           {items.map((item, index) => (
             <div key={index}>{renderLineItem(item)}</div>
           ))}
         </div>
-        <div className="divider"></div>
-
-        {/* Pricing Summary */}
-        <div className="item">
-          <span>Subtotal:</span>
-          <span>₦{subtotal.toFixed(2)}</span>
+        
+        <div className="divider" />
+        
+        <div className="total-section">
+          <div className="item">
+            <span>Subtotal:</span>
+            <span className="item-right">₦{subtotal.toFixed(2)}</span>
+          </div>
+          
+          <div className="divider" />
+          
+          <div className="item bold">
+            <span>Total:</span>
+            <span className="item-right">₦{total.toFixed(2)}</span>
+          </div>
         </div>
-        {/* <div className="item">
-          <span>Tax:</span>
-          <span>₦{tax.toFixed(2)}</span>
-        </div> */}
-        <div className="divider"></div>
-        <div className="item bold">
-          <span>Total:</span>
-          <span>₦{total.toFixed(2)}</span>
+        
+        <div className="divider" />
+        
+        <div>
+          <div>Payment Method: {paymentMethod}</div>
+          {change > 0 && <div>Change: ₦{change.toFixed(2)}</div>}
         </div>
-        <div className="divider"></div>
-
-        {/* Payment Info */}
-        <div>Payment Method: {paymentMethod}</div>
-        {change?<div>Change: ₦{change}</div>:null}
-        <div className="divider"></div>
-        {/* Footer */}
-        <div className="center">{customMessage}</div>
+        
+        <div className="divider" />
+        
+        <div className="footer">
+          {customMessage}
+          <div className="cut-line" />
+        </div>
       </div>
 
-      {/* Print Button */}
-      {/* <button 
+      <button 
         onClick={handlePrint} 
         style={{
-            padding: '10px 20px',
-            backgroundColor:   '#28a745' ,
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            alignItems:'center' 
-          }}
+          padding: '10px 20px',
+          backgroundColor: '#28a745',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          display: 'block',
+          margin: '20px auto'
+        }}
       >
         Print Receipt
-      </button> */}
-      <button 
-  onClick={handlePrint} 
-  style={{
-    padding: '10px 20px',
-    backgroundColor: '#28a745',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    display: 'block', // Add this
-    marginLeft: 'auto', // Add this
-    marginRight: 'auto' // Add this
-  }}
->
-  Print Receipt
-</button>
+      </button>
     </div>
   );
 };

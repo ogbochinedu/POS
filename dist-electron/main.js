@@ -58,44 +58,78 @@ app.on('activate', () => {
 })
 
 // Listen for the same channel as defined in preload.js
-ipcMain.on('print-request', (event, content) => {
-  console.log('Received print request:', content)
+// ipcMain.on('print-request', (event, content) => {
+//   console.log('Received print request:', content)
   
-  const printWindow = new BrowserWindow({
+//   const printWindow = new BrowserWindow({
+//     show: false,
+//     webPreferences: {
+//       offscreen: true,
+//     }
+//   })
+
+//   const htmlContent = `
+//     <html>
+//       <head>
+//         <title>Receipt</title>
+//         <style>
+//           /* Your styles here */
+//         </style>
+//       </head>
+//       <body>
+//         ${content}
+//       </body>
+//     </html>
+//   `
+
+//   printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`)
+
+//   printWindow.webContents.on('did-finish-load', () => {
+//     printWindow.webContents.print(
+//       {
+//         silent: true,
+//         printBackground: true,
+//       },
+//       (success, errorType) => {
+//         if (!success) {
+//           console.error(`Print failed: ${errorType}`)
+//         }
+//         printWindow.close()
+//       }
+//     )
+//   })
+// })
+
+// In your main process
+ipcMain.on('print-request', (event, printData) => {
+  const win = new BrowserWindow({
     show: false,
     webPreferences: {
-      offscreen: true,
+      nodeIntegration: true
     }
-  })
+  });
 
-  const htmlContent = `
-    <html>
-      <head>
-        <title>Receipt</title>
-        <style>
-          /* Your styles here */
-        </style>
-      </head>
-      <body>
-        ${content}
-      </body>
-    </html>
-  `
+  win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(printData)}`);
 
-  printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`)
-
-  printWindow.webContents.on('did-finish-load', () => {
-    printWindow.webContents.print(
-      {
-        silent: true,
-        printBackground: true,
+  win.webContents.on('did-finish-load', () => {
+    win.webContents.print({
+      silent: true,
+      printBackground: false,
+      deviceName: 'YOUR_THERMAL_PRINTER_NAME', // Replace with your printer name
+      margins: {
+        marginType: 'custom',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0
       },
-      (success, errorType) => {
-        if (!success) {
-          console.error(`Print failed: ${errorType}`)
-        }
-        printWindow.close()
+    }, (success, error) => {
+      if (error) {
+        event.reply('reply-from-main', { success: false, error: error });
+      } else {
+        event.reply('reply-from-main', { success: true });
       }
-    )
-  })
-})
+      win.close();
+    });
+  });
+});
