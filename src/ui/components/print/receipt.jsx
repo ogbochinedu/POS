@@ -125,9 +125,52 @@ const handlePrint44 = () => {
     console.log('Attempting to print...')
     if (window.electronAPI) {
         const printContent = receiptRef.current.innerHTML;
+        const printData = `
+      <html>
+        <head>
+          <title>Receipt</title>
+          <style>
+            body {
+              font-family: monospace;
+              margin: 0;
+              padding: 0;
+              background-color: #fff;
+            }
+            .receipt {
+              width: 280px; /* Standard thermal printer width */
+              margin: auto;
+              padding: 10px;
+              font-size: 12px;
+              line-height: 1.4;
+              color: #000;
+            }
+            .center {
+              text-align: center;
+            }
+            .divider {
+              border-top: 1px dashed #000;
+              margin: 8px 0;
+            }
+            .right {
+              text-align: right;
+            }
+            .bold {
+              font-weight: bold;
+            }
+            .item {
+              display: flex;
+              justify-content: space-between;
+            }
+          </style>
+        </head>
+        <body>
+          ${printContent}
+        </body>
+      </html>
+    `
   //console.log(printContent)
         // Send the content to the main process to handle the print request
-        window.electronAPI.print('print-request', printContent);
+        window.electronAPI.print('print-request', printData);
     } else {
       console.error('Electron API is not available')
       console.log('window object:', window)
