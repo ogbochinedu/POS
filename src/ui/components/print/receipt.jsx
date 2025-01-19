@@ -51,11 +51,11 @@ if (window.electronAPI && window.electronAPI.onFromMain) {
             }
             
               .receipt {
-  width: 80mm; /* Match the printer width */
+  width: 70mm; /* Match the printer width */
   margin: 0 auto; /* Center the content */
   padding: 5mm;
   font-family: monospace;
-  font-size: 10px;
+  font-size: 8px;
   line-height: 1.5;
   box-sizing: border-box; /* Include padding in width */
   word-wrap: break-word; /* Ensure text wraps within the container */
@@ -130,7 +130,7 @@ if (window.electronAPI && window.electronAPI.onFromMain) {
         <div className="divider"></div>
 
         {/* Order Info */}
-        <div  className="bold">Order No: #{orderNumber}</div>
+        Order No: # <div  className="bold">{orderNumber}</div>
         {/* {customerName && <div>Customer: {customerName}</div>} */}
         <div>Cashier: {cashierName}</div>
         <div>Date: {dateTime}</div>

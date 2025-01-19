@@ -552,7 +552,7 @@ total = cart.reduce(
   const loggedinuser  = JSON.parse(localStorage.getItem("user")) || null;
       
     const sampleData = {
-        businessName: "Mimi 042",
+        businessName: "Mimi's Place 042",
         address: "Coal City Garden Estate Shopping Mall, Okpara Ave, behind CBN Office, Enugu",
         phoneNumber: "(+234) 807-733-8874",
         orderNumber: generateTransactionNumber(),

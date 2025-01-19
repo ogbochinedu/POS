@@ -80,7 +80,7 @@ ipcMain.on('print-request', (event, content) => {
         <style>
           @page {
             margin: 0;
-            size: 80mm auto;  /* Standard thermal paper width */
+            size: 70mm auto;  /* Standard thermal paper width */
           }
           
           body {
@@ -91,7 +91,7 @@ ipcMain.on('print-request', (event, content) => {
             print-color-adjust: exact;
           }
               .receipt {
-    width: 80mm;
+    width: 70mm;
     margin: 0 auto;
     padding: 5mm;
     box-sizing: border-box;
