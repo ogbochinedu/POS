@@ -57,10 +57,10 @@ if (window.electronAPI && window.electronAPI.onFromMain) {
               background-color: #fff;
             }
             .receipt {
-              width: 280px; /* Standard thermal printer width */
+              width: 220px; /* Standard thermal printer width */
               margin: auto;
               padding: 10px;
-              font-size: 12px;
+              font-size: 10px;
               line-height: 1.4;
               color: #000;
             }
@@ -118,7 +118,7 @@ if (window.electronAPI && window.electronAPI.onFromMain) {
         <div className="divider"></div>
 
         {/* Order Info */}
-        <div>Order No: #{orderNumber}</div>
+        <div  className="bold">Order No: #{orderNumber}</div>
         {/* {customerName && <div>Customer: {customerName}</div>} */}
         <div>Cashier: {cashierName}</div>
         <div>Date: {dateTime}</div>
@@ -150,7 +150,7 @@ if (window.electronAPI && window.electronAPI.onFromMain) {
 
         {/* Payment Info */}
         <div>Payment Method: {paymentMethod}</div>
-        {change?<div>Change: ₦{change}</div>:null}
+        {change>0?<div>Change: ₦{change}</div>:null}
         <div className="divider"></div>
         {/* Footer */}
         <div className="center">{customMessage}</div>
