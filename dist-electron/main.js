@@ -97,6 +97,13 @@ ipcMain.on('print-request', (event, content) => {
     box-sizing: border-box;
   }
 
+         .item {
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden; /* Prevent overflow issues */
+   padding-right: 10px;
+}
+
           /* Ensure content fits thermal paper width */
           * {
             max-width: 80mm;

@@ -80,6 +80,7 @@ if (window.electronAPI && window.electronAPI.onFromMain) {
   display: flex;
   justify-content: space-between;
   overflow: hidden; /* Prevent overflow issues */
+   padding-right: 10px;
 }
 
           </style>
