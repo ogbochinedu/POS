@@ -95,8 +95,14 @@ ipcMain.on('print-request', (event, content) => {
             background-color: white;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
+              font-family: monospace;
           }
-
+  .receipt {
+    width: 80mm;
+    margin: 0 auto;
+    padding: 5mm;
+    box-sizing: border-box;
+  }
           /* Ensure content fits thermal paper width */
           * {
             max-width: 80mm;
@@ -134,95 +140,3 @@ ipcMain.on('print-request', (event, content) => {
   })
 })
 
-
-// ipcMain.on('print-request', (event, content) => {
-//   console.log('Received print request');
-  
-//   const printWindow = new BrowserWindow({
-//     show: false,
-//     webPreferences: {
-//       offscreen: true,
-//     }
-//   });
-
-//   const htmlContent = `
-//     <!DOCTYPE html>
-//     <html>
-//       <head>
-//         <meta charset="utf-8">
-//         <title>Receipt</title>
-//         <style>
-//           @page {
-//             margin: 0;
-//             size: 80mm auto;  /* Standard thermal paper width */
-//           }
-          
-//           body {
-//             margin: 0;
-//             padding: 0;
-//             background-color: white;
-//             -webkit-print-color-adjust: exact;
-//             print-color-adjust: exact;
-//           }
-
-//           /* Ensure content fits thermal paper width */
-//           * {
-//             max-width: 80mm;
-//             box-sizing: border-box;
-//           }
-
-//           /* Prevent any background printing */
-//           * {
-//             -webkit-print-color-adjust: exact;
-//             print-color-adjust: exact;
-//           }
-//         </style>
-//       </head>
-//       <body>
-//         ${content}
-//       </body>
-//     </html>
-//   `;
-
-//   printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
-
-//   printWindow.webContents.on('did-finish-load', () => {
-//     printWindow.webContents.print({
-//       silent: true,
-//       printBackground: false,  // Changed to false for thermal printers
-//       margins: {
-//         marginType: 'custom',
-//         top: 0,
-//         bottom: 0,
-//         left: 0,
-//         right: 0
-//       },
-//       deviceName: 'POS-90', // Replace with your printer name
-//       pageSize: {
-//         height: 301000, // This is microns (30.1cm)
-//         width: 80000   // 80mm in microns
-//       }
-//     }, (success, errorType) => {
-//       if (!success) {
-//         console.error(`Print failed: ${errorType}`);
-//         event.reply('reply-from-main', { success: false, error: errorType });
-//       } else {
-//         console.log('Print successful');
-//         event.reply('reply-from-main', { success: true });
-//       }
-//       printWindow.close();
-//     });
-//   });
-// });
-
-// <html>
-// <head>
-//   <title>Receipt</title>
-//   <style>
-//     /* Your styles here */
-//   </style>
-// </head>
-// <body>
-//   ${content}
-// </body>
-// </html>
