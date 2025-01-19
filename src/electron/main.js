@@ -107,22 +107,62 @@ app.on('activate', () => {
 //   })
 // })
 
-// In your main process
-ipcMain.on('print-request', (event, printData) => {
-  const win = new BrowserWindow({
+
+ipcMain.on('print-request', (event, content) => {
+  console.log('Received print request');
+  
+  const printWindow = new BrowserWindow({
     show: false,
     webPreferences: {
-      nodeIntegration: true
+      offscreen: true,
     }
   });
 
-  win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(printData)}`);
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Receipt</title>
+        <style>
+          @page {
+            margin: 0;
+            size: 80mm auto;  /* Standard thermal paper width */
+          }
+          
+          body {
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
 
-  win.webContents.on('did-finish-load', () => {
-    win.webContents.print({
+          /* Ensure content fits thermal paper width */
+          * {
+            max-width: 80mm;
+            box-sizing: border-box;
+          }
+
+          /* Prevent any background printing */
+          * {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
+        </style>
+      </head>
+      <body>
+        ${content}
+      </body>
+    </html>
+  `;
+
+  printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
+
+  printWindow.webContents.on('did-finish-load', () => {
+    printWindow.webContents.print({
       silent: true,
-      printBackground: false,
-      deviceName: 'YOUR_THERMAL_PRINTER_NAME', // Replace with your printer name
+      printBackground: false,  // Changed to false for thermal printers
       margins: {
         marginType: 'custom',
         top: 0,
@@ -130,13 +170,20 @@ ipcMain.on('print-request', (event, printData) => {
         left: 0,
         right: 0
       },
-    }, (success, error) => {
-      if (error) {
-        event.reply('reply-from-main', { success: false, error: error });
+      deviceName: 'POS-90', // Replace with your printer name
+      pageSize: {
+        height: 301000, // This is microns (30.1cm)
+        width: 80000   // 80mm in microns
+      }
+    }, (success, errorType) => {
+      if (!success) {
+        console.error(`Print failed: ${errorType}`);
+        event.reply('reply-from-main', { success: false, error: errorType });
       } else {
+        console.log('Print successful');
         event.reply('reply-from-main', { success: true });
       }
-      win.close();
+      printWindow.close();
     });
   });
 });
