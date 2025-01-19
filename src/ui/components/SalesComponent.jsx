@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import ReceiptExample from '../components/Receipt';
 import Receipt from './print/receipt';
 import useProducts from '../../hooks/useProducts';
@@ -45,13 +45,59 @@ console.log(cart,"cart..")
     setFilteredProducts(filtered);
   };
 
-  const fetchAndMapProducts = async () => {
-    try {
-var productsFromDb = productsValue;
-console.log(productsFromDb,"products from db..")
-if (!productsFromDb || productsFromDb.length === 0) {
+//   const fetchAndMapProducts = async () => {
+//     try {
+// var productsFromDb = productsValue;
+// console.log(productsFromDb,"products from db..")
+// if (!productsFromDb || productsFromDb.length === 0) {
 
-      const response = await fetch("https://main.d3myqrx0bf94mb.amplifyapp.com/api/products/byBusinessAndBranch?businessid=6713f3b1cb6556c127c59eff&branch=Select%20Branch&page=1&limit=10https://main.d3myqrx0bf94mb.amplifyapp.com/api/products/byBusinessAndBranch?businessid=6713f3b1cb6556c127c59eff&branch=Select%20Branch&page=1&limit=10");
+//       const response = await fetch("https://main.d3myqrx0bf94mb.amplifyapp.com/api/products/byBusinessAndBranch?businessid=67404e0b311a977dfc311c8f&branch=Select%20Branch&page=1&limit=1000");
+//       const apiProducts = await response.json();
+
+//       const remappedProducts = apiProducts?.data?.map(product => ({
+//         id: product._id,
+//         name: product.Name || "Unnamed Product",
+//         image: product.mainpictureurl || "/api/placeholder/100/100",
+//         price: parseFloat(product.Price) || 0,
+//         category: product.Category || "Uncategorized",
+//         quantity: product.quantity || 0,
+//         inventoryStatus: product.isAvailable ? "INSTOCK" : "OUTOFSTOCK",
+//       }));
+
+//       setProducts(remappedProducts);
+//       remappedProducts?.map((index) => {
+//         addProduct(index);
+//       });
+
+//       setFilteredProducts(remappedProducts);
+//     }
+//     else{    
+//         setFilteredProducts(productsFromDb); 
+//     }
+//     } catch (error) {
+//       console.error("Error fetching products:", error);
+//     }
+//   };
+
+
+function generateTransactionNumber() {
+  const prefix = "MIMIsPlace042"; // Unique prefix for Mimi's Place
+  const timestamp = Date.now(); // Current timestamp in milliseconds
+  const randomPart = Math.floor(Math.random() * 100000); // Random number for uniqueness
+  return `${prefix}-${timestamp}-${randomPart}`;
+}
+
+const fetchAndMapProducts = async () => {
+  try {
+    // Fetch products from localStorage
+    const storedProducts = JSON.parse(localStorage.getItem("products")) || [];
+    console.log(storedProducts, "products from localStorage..");
+
+    if (!storedProducts || storedProducts.length === 0) {
+      // Fetch from API if no products are in localStorage
+      const response = await fetch(
+        "https://main.d3myqrx0bf94mb.amplifyapp.com/api/products/byBusinessAndBranch?businessid=67404e0b311a977dfc311c8f&branch=Select%20Branch&page=1&limit=1000"
+      );
       const apiProducts = await response.json();
 
       const remappedProducts = apiProducts?.data?.map(product => ({
@@ -64,21 +110,28 @@ if (!productsFromDb || productsFromDb.length === 0) {
         inventoryStatus: product.isAvailable ? "INSTOCK" : "OUTOFSTOCK",
       }));
 
+      // Save remapped products to localStorage
+      localStorage.setItem("products", JSON.stringify(remappedProducts));
+
+      // Update state
       setProducts(remappedProducts);
-      remappedProducts?.map((index) => {
-        addProduct(index);
+      remappedProducts?.forEach(product => {
+        addProduct(product); // Assuming addProduct handles state logic
       });
 
       setFilteredProducts(remappedProducts);
+    } else {
+      // Use stored products
+      setProducts(storedProducts);
+      setFilteredProducts(storedProducts);
     }
-    else{    
-        setFilteredProducts(productsFromDb); 
-    }
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
-  const addToCart = (product) => {
+  } catch (error) {
+    console.error("Error fetching products:", error);
+  }
+};
+
+
+const addToCart = (product) => {
     const existingItem = cart.find(item => item.id === product.id);
     if (existingItem) {
       setCart(cart.map(item =>
@@ -114,9 +167,7 @@ if (!productsFromDb || productsFromDb.length === 0) {
     setDiscount(percentage);
   };
 
-//   const handleCheckout = () => {
-//     console.log('Processing checkout:', { cart, total, discount });
-//   };
+
 
   const handlePrintReceipt = () => {
     console.log('Printing receipt:', { cart, total, discount });
@@ -300,7 +351,7 @@ if (!productsFromDb || productsFromDb.length === 0) {
     </div>
   );
 
-  const handleAmountChange = (e) => {
+  const handleAmountChange1 = (e) => {
     const value = e.target.value;
     setAmountPaid(value);
 
@@ -313,7 +364,18 @@ if (!productsFromDb || productsFromDb.length === 0) {
     }
 
   };
+    // Debounced input handler
+    const handleAmountChange = useCallback((e) => {
+      const value = e.target.value;
+      setAmountPaid(value);
   
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue) && numericValue >= total) {
+        setChange(numericValue - total);
+      } else {
+        setChange(null);
+      }
+    }, [total]);
 
 
   const ChangeModal= ({onClose})=>(
@@ -389,11 +451,11 @@ if (!productsFromDb || productsFromDb.length === 0) {
               }}
             />
           </label>
-          {change !== null && (
+          {/* {change !== null && (
             <p>
               Change: <strong>₦{change.toFixed(2)}</strong>
             </p>
-          )}
+          )} */}
         </div>
         <div
           style={{
@@ -487,13 +549,14 @@ total = cart.reduce(
     0
   ); 
 
+  const loggedinuser  = JSON.parse(localStorage.getItem("user")) || null;
       
     const sampleData = {
         businessName: "Mimi 042",
         address: "Coal City Garden Estate Shopping Mall, Okpara Ave, behind CBN Office, Enugu",
         phoneNumber: "(+234) 807-733-8874",
-        orderNumber: "1001",
-        cashierName: "John Doe",
+        orderNumber: generateTransactionNumber(),
+        cashierName: loggedinuser?.name || "Mimi's Cashier",
         items: output,
         subtotal: total,
         tax: 1.48,
@@ -501,10 +564,14 @@ total = cart.reduce(
         paymentMethod: method,
         dateTime: new Date().toLocaleString(),
         customerName: "Jane Smith",
-        customMessage: "Thank you for dining with us! We hope you enjoyed your meal and look forward to serving you again."
+        customMessage: "Thank you for dining with us! We hope you enjoyed your meal and look forward to serving you again.",
+        change: method ==='cash'? amountPaid - total : 0
       };
       if(method==='cash')
-        {setShowChange(true)}
+        {setShowChange(true)
+        setShowReceiptModal(false);
+        setShowPaymentModal(false);
+        }
       else{
     setShowReceiptModal(true);
       }
@@ -521,12 +588,97 @@ total = cart.reduce(
   };
 
 
-  const saveTransaction =()=>{
+  const saveTransaction =async()=>{
     addTransaction(receiptData);
+    await postTransaction("67404e0b311a977dfc311c8f",receiptData)
     setCart([]);
     setShowReceiptModal(false);
     setShowPaymentModal(false);
   }
+
+  async function postTransaction(businessId, transactionData) {
+    const url = "http://localhost:3001/api/PosTransaction"; // Replace with your actual API endpoint
+    const payload = {
+      businessId,
+      transactionData,
+    };
+  
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error posting transaction:", errorData.error);
+        return { success: false, error: errorData.error };
+      }
+  
+      const result = await response.json();
+      console.log("Transaction saved successfully:", result);
+      await retryUnsentTransactions();
+      return { success: true, data: result.data };
+    } catch (error) {
+      console.error("Error occurred while posting transaction:", error.message);
+
+    const unsentTransactions = JSON.parse(localStorage.getItem("unsentTransactions")) || [];
+    unsentTransactions.push(payload);
+    localStorage.setItem("unsentTransactions", JSON.stringify(unsentTransactions));
+    console.log("Transaction saved to local storage for retry later.");
+    return { success: false, error: error.message };
+    }
+  }
+
+
+  // Function to retry sending unsent transactions
+async function retryUnsentTransactions() {
+  const url = "http://localhost:3001/api/PosTransaction"; // Replace with your actual API endpoint
+  const unsentTransactions = JSON.parse(localStorage.getItem("unsentTransactions")) || [];
+
+  if (unsentTransactions.length === 0) {
+    console.log("No unsent transactions to retry.");
+    return;
+  }
+
+  console.log(`Retrying ${unsentTransactions.length} unsent transactions...`);
+
+  const successfullySent = [];
+
+  for (const transaction of unsentTransactions) {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(transaction),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Transaction retried successfully:", result);
+        successfullySent.push(transaction);
+      } else {
+        const errorData = await response.json();
+        console.error("Error retrying transaction:", errorData.error);
+      }
+    } catch (error) {
+      console.error("Error occurred while retrying transaction:", error.message);
+    }
+  }
+
+  // Remove successfully sent transactions from local storage
+  const remainingTransactions = unsentTransactions.filter(
+    (transaction) => !successfullySent.includes(transaction)
+  );
+  localStorage.setItem("unsentTransactions", JSON.stringify(remainingTransactions));
+
+  console.log(`${successfullySent.length} transactions retried successfully.`);
+}
 
   // ... (previous functions remain the same)
 
@@ -547,36 +699,7 @@ total = cart.reduce(
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
       }}>
         <div style={{ padding: '20px', }}>
-          {/* <div style={{
-            position: 'relative',
-            marginBottom: '20px',
-            marginRight:'20px', 
-          }}>
-            <input
-              type="text"
-              placeholder="Search products by name or category..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 40px 12px 15px',
-                border: '2px solid #ddd',
-                borderRadius: '8px',
-                fontSize: '16px',
-                transition: 'border-color 0.3s ease',
-                outline: 'none'
-              }}
-            />
-            <span style={{
-              position: 'absolute',
-              right: '15px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#666'
-            }}>
-              🔍
-            </span>
-          </div> */}
+         
           <div
   style={{
     position: 'relative',
@@ -704,25 +827,6 @@ total = cart.reduce(
         </div>
       </div>
 
-      {/* Cart Section remains mostly the same but update the checkout button */}
-      {/* <div style={{
-        width: '35%',
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        display: 'flex',
-        flexDirection: 'column'
-      }}> */}
-        {/* ... (previous cart content remains the same) ... */}
-       
-        {/* <div style={{
-          padding: '20px',
-          borderTop: '1px solid #ddd'
-        }}>
-        
-        </div>
-      </div> */}
-
          {/* Cart Section */}
          <div style={{
         width: '35%',
@@ -813,33 +917,7 @@ total = cart.reduce(
           padding: '20px',
           borderTop: '1px solid #ddd'
         }}>
-          {/* <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginBottom: '15px'
-          }}>
-            <span>Discount:</span>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                onClick={() => applyDiscount(5)}
-                style={{
-                  padding: '5px 10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  backgroundColor: 'white'
-                }}
-              >5%</button>
-              <button
-                onClick={() => applyDiscount(10)}
-                style={{
-                  padding: '5px 10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  backgroundColor: 'white'
-                }}
-              >10%</button>
-            </div>
-          </div> */}
+          
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -853,35 +931,7 @@ total = cart.reduce(
             display: 'flex',
             gap: '10px'
           }}>
-            {/* <button
-              onClick={handleCheckout}
-              disabled={cart.length === 0}
-              style={{
-                flex: 1,
-                padding: '12px',
-                backgroundColor: cart.length === 0 ? '#ccc' : '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: cart.length === 0 ? 'not-allowed' : 'pointer'
-              }}
-            >
-              Checkout
-            </button>
-            <button
-              onClick={handlePrintReceipt}
-              disabled={cart.length === 0}
-              style={{
-                padding: '12px',
-                backgroundColor: cart.length === 0 ? '#ccc' : '#6c757d',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: cart.length === 0 ? 'not-allowed' : 'pointer'
-              }}
-            >
-              Print Receipt
-            </button> */}
+            
             <button
             onClick={() => setShowPaymentModal(true)}
             disabled={cart.length === 0}

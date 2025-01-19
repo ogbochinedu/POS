@@ -234,12 +234,12 @@ const Dashboard = () => {
             </svg>
             New Sale
           </Link>
-          <Link  to="/inventory" className="action-btn">
+          {/* <Link  to="/inventory" className="action-btn">
             <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
             </svg>
             Inventory
-          </Link>
+          </Link> */}
           <Link  to="/transactionhistory" className="action-btn">
             <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />

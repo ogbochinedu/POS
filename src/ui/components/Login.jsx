@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import reactLogo from '../assets/react.svg';
 import Logo from '../assets/mimi.jpg';
 import BackgroundImage from '../assets/bgpos.jpg'; // Import your background image here
 import useUsers from '../../hooks/useUsers';
@@ -123,14 +122,28 @@ const styles = `
 `;
 
 const Login = () => {
-  const{} = useUsers();
+  const{loginUser,user} = useUsers();
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
 
   const handleLogin = () => {
     // Add login logic here
-    navigate('/dashboard');
+    console.log('Logging in...');
+    loginUser(username, password);
+    console.log(user);
+    if (user){
+      console.log('Login successful');
+      console.log(user);
+
+      localStorage.setItem("user", JSON.stringify(user));
+      navigate('/dashboard');
+    }else{
+      console.log('Login failed');
+      setError('Invalid username or password');
+    }
+   
   };
 
   return (
@@ -173,6 +186,7 @@ const Login = () => {
             />
 
             <div className="mb-4">
+              {error && <div className="text-red-500">{error}</div>}
               {/* Add Remember me and Forgot password here if needed */}
             </div>
 

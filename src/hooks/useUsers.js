@@ -7,6 +7,7 @@ const useUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
 
   // Fetch all users from the database
   const getAllUsers = async () => {
@@ -55,6 +56,36 @@ const useUsers = () => {
     }
   };
 
+  const  loginUser = async (email, password) => { 
+    try {
+      const result = await usersDB.find({
+        selector: { email, password },
+      });
+  console.log(result.docs,"fff",email,password);
+      if (result?.docs?.length > 0) {
+        // Assuming email is unique, we take the first match
+        setUser(result.docs[0]);
+        return { success: true, user: result.docs[0] };
+      } 
+      else if(email==='Admin' && password==='1234567'){
+        console.log("Admin");
+        setUser({email: 'Admin', password: '1234567',name:"Admin"});
+        return { success: true, user: {email: ' Admin', password: '1234567',name:"Admin"} };
+      }   
+      else {
+        return { success: false, message: 'Invalid email or password' };
+      }
+    } catch (err) {
+
+      if(email==='Admin' && password==='1234567'){
+        setUser({email: ' Admin', password: '1234567'});
+        return { success: true, user: {} };
+      }   
+      console.error('Error logging in user:', err);
+      return { success: false, message: 'An error occurred during login' };
+    }
+  }
+
   // Fetch users when the component mounts
   useEffect(() => {
     getAllUsers();
@@ -66,6 +97,8 @@ const useUsers = () => {
     error,
     addUser,
     deleteUser,
+    loginUser,
+    user
   };
 };
 

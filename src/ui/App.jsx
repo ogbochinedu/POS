@@ -813,7 +813,7 @@ function AppContent() {
   const navItems = [
     { path: '/dashboard', name: 'Dashboard', icon: 'dashboard' },
     { path: '/sales', name: 'Sales', icon: 'sales' },
-    { path: '/inventory', name: 'Inventory', icon: 'inventory' },
+    // { path: '/inventory', name: 'Inventory', icon: 'inventory' },
     { path: '/transactionhistory', name: 'Transactions', icon: 'transactions' },
     { path: '/settings', name: 'Settings', icon: 'settings' },
     // { path: '/receipt', name: 'receipt', icon: 'settings' }

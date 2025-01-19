@@ -14,7 +14,8 @@ const Receipt = ({
   paymentMethod,
   dateTime,
   customerName = '',
-  customMessage = 'Thank you for your patronage!'
+  customMessage = 'Thank you for your patronage!',
+  change
 }) => {
   const receiptRef = useRef(null);
 
@@ -155,7 +156,7 @@ const handlePrint44 = () => {
 
         {/* Order Info */}
         <div>Order No: #{orderNumber}</div>
-        {customerName && <div>Customer: {customerName}</div>}
+        {/* {customerName && <div>Customer: {customerName}</div>} */}
         <div>Cashier: {cashierName}</div>
         <div>Date: {dateTime}</div>
         <div className="divider"></div>
@@ -186,6 +187,7 @@ const handlePrint44 = () => {
 
         {/* Payment Info */}
         <div>Payment Method: {paymentMethod}</div>
+        {change?<div>Change: ₦{change}</div>:null}
         <div className="divider"></div>
         {/* Footer */}
         <div className="center">{customMessage}</div>
