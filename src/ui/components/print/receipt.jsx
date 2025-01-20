@@ -212,7 +212,7 @@ const Receipt = ({
 }) => {
   const receiptRef = useRef(null);
 
-  const handlePrint = () => {
+  const handlePrint1 = () => {
     const printContent = receiptRef.current.innerHTML;
     const printWindow = window.open('', '_blank');
     printWindow.document.open();
@@ -228,7 +228,7 @@ const Receipt = ({
               background-color: #fff;
             }
             .receipt {
-              width: 80mm; /* Match standard receipt printer width */
+              width: 58mm; /* Match standard receipt printer width */
               margin: auto;
               padding: 5mm;
               font-size: 10px;
@@ -270,6 +270,68 @@ const Receipt = ({
     printWindow.print();
     printWindow.close();
   };
+  const handlePrint = () => {
+    const printContent = receiptRef.current.innerHTML;
+    const printWindow = window.open('', '_blank');
+    printWindow.document.open();
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Receipt</title>
+          <style>
+            @page {
+              margin: 0; /* Remove default margins */
+            }
+            body {
+              font-family: monospace;
+              margin: 0;
+              padding: 0;
+              background-color: #fff;
+            }
+            .receipt {
+              width: 58mm; /* Match standard receipt printer width */
+              margin: 0; /* Remove extra space */
+              padding: 0; /* Remove unnecessary padding */
+              font-size: 10px;
+              line-height: 1.4;
+              box-sizing: border-box;
+              word-wrap: break-word;
+            }
+            .center {
+              text-align: center;
+            }
+            .divider {
+              border-top: 1px dashed #000;
+              margin: 8px 0;
+            }
+            .item {
+              display: flex;
+              justify-content: space-between;
+              overflow: hidden;
+              word-break: break-word;
+            }
+            .bold {
+              font-weight: bold;
+            }
+            @media print {
+              body {
+                -webkit-print-color-adjust: exact;
+                margin: 0;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="receipt">${printContent}</div>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  };
+  
 
   const renderLineItem = (item) => {
     const itemTotal = (item.price * item.quantity).toFixed(2);
