@@ -97,7 +97,7 @@
 //       console.error('Electron API is not available')
 //       console.log('window object:', window)
 //     }
-//   }
+//     }
 //   // .receipt {
 //   //   width: 220px; /* Standard thermal printer width */
 //   //   margin: auto;
@@ -424,7 +424,7 @@ const Receipt = ({
 }) => {
   const receiptRef = useRef(null);
 
-  const handlePrint = () => {
+  const handlePrint2 = () => {
     const printContent = receiptRef.current.innerHTML;
     const printWindow = window.open('', '_blank');
     printWindow.document.open();
@@ -499,6 +499,73 @@ const Receipt = ({
       </div>
     );
   };
+
+  const handlePrint = () => {
+    console.log('Attempting to print...')
+    if (window.electronAPI) {
+      const printContent = receiptRef.current.innerHTML;
+       var printData = `
+        <html>
+          <head>
+            <title>Receipt</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #fff;
+              }
+              .receipt {
+                width: 58mm; /* Standard thermal receipt width */
+                margin: 0 auto;
+                padding: 5mm;
+                font-size: 12px; /* Increased for better visibility */
+                line-height: 1.6;
+                color: #000;
+                box-sizing: border-box;
+                word-wrap: break-word;
+              }
+              .center {
+                text-align: center;
+              }
+              .divider {
+                border-top: 1px solid #000;
+                margin: 10px 0;
+              }
+              .item {
+                display: flex;
+                justify-content: space-between;
+                word-break: break-word;
+              }
+              .bold {
+                font-weight: bold;
+              }
+              .highlight {
+                font-size: 14px; /* Highlight key text with larger size */
+              }
+              @media print {
+                body {
+                  margin: 0;
+                  -webkit-print-color-adjust: exact;
+                }
+                .receipt {
+                  width: 100%;
+                  padding: 0;
+                }
+              }
+            </style>
+          </head>
+          <body>
+            <div class="receipt">${printContent}</div>
+          </body>
+        </html>
+      `;
+        window.electronAPI.print('print-request', printData);
+    } else {
+      console.error('Electron API is not available')
+      console.log('window object:', window)
+    }
+    }
 
   return (
     <div>
