@@ -491,7 +491,7 @@ const Receipt = ({
   };
 
   const renderLineItem = (item) => {
-    const itemTotal = (item.price * item.quantity).toFixed(2);
+    const itemTotal = (item.price * item.quantity);
     return (
       <div className="item">
         <span>{item.quantity}x {item.name}</span>
@@ -591,18 +591,18 @@ const Receipt = ({
         {/* Pricing Summary */}
         <div className="item">
           <span>Subtotal:</span>
-          <span>₦{subtotal.toFixed(2)}</span>
+          <span>₦{subtotal}</span>
         </div>
         <div className="divider"></div>
         <div className="item bold highlight">
           <span>Total:</span>
-          <span>₦{total.toFixed(2)}</span>
+          <span>₦{total}</span>
         </div>
         <div className="divider"></div>
 
         {/* Payment Info */}
         <div>Payment Method: {paymentMethod}</div>
-        {change > 0 && <div>Change: ₦{change.toFixed(2)}</div>}
+        {change > 0 && <div>Change: ₦{change}</div>}
         <div className="divider"></div>
 
         {/* Footer */}
