@@ -516,10 +516,10 @@ const Receipt = ({
                 background-color: #fff;
               }
               .receipt {
-                width: 58mm; /* Standard thermal receipt width */
+                width: 50mm; /* Standard thermal receipt width */
                 margin: 0 auto;
-                padding: 5mm;
-                font-size: 12px; /* Increased for better visibility */
+                padding: 3mm;
+                font-size: 10px; /* Increased for better visibility */
                 line-height: 1.6;
                 color: #000;
                 box-sizing: border-box;
@@ -549,7 +549,7 @@ const Receipt = ({
                   -webkit-print-color-adjust: exact;
                 }
                 .receipt {
-                  width: 100%;
+                  width: 90%;
                   padding: 0;
                 }
               }
