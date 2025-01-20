@@ -228,7 +228,7 @@ const Receipt = ({
               background-color: #fff;
             }
             .receipt {
-              width: 58mm; /* Match standard receipt printer width */
+              width: 80mm; /* Match standard receipt printer width */
               margin: auto;
               padding: 5mm;
               font-size: 10px;
