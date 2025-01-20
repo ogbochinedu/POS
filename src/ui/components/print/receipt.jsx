@@ -228,12 +228,13 @@ const Receipt = ({
               background-color: #fff;
             }
             .receipt {
-              width: 70mm; /* Match standard receipt printer width */
+              width: 58mm; /* Match standard receipt printer width */
               margin: auto;
               padding: 5mm;
               font-size: 10px;
-              line-height: 1.5;
+              line-height: 1.4;
               box-sizing: border-box;
+               word-wrap: break-word;
             }
             .center {
               text-align: center;
@@ -246,6 +247,7 @@ const Receipt = ({
               display: flex;
               justify-content: space-between;
               overflow: hidden;
+               word-break: break-word;
             }
             .bold {
               font-weight: bold;
